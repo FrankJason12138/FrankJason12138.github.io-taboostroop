@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>我的实验</title>
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+      .welcome-container {
+        text-align: center;
+        margin-top: 50px;
+      }
+      .jspsych-btn {
+        font-size: 18px;
+        padding: 10px 20px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+    // 初始化jsPsych
+    const jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData(); // 实验完成后显示数据
+      },
+      override_safe_mode: true // 允许覆盖安全模式
+    });
+
+    // 设置实验时间线
+    const timeline = [];
+
+    // 欢迎屏幕
+    const welcome = {
+      type: jsPsychHtmlButtonResponse,  // 使用HtmlButtonResponse插件
+      stimulus: `
+        <div class="welcome-container">
+          <h2>欢迎参加实验！</h2>
+          <p>请点击下方按钮进入实验</p>
+        </div>
+      `,
+      choices: ['开始实验'],  // 设置按钮选项
+      on_start: function() {
+        // 尝试恢复 AudioContext
+        if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
+          window.AudioContext = window.AudioContext || window.webkitAudioContext;
+          const audioContext = new AudioContext();
+          audioContext.resume().then(() => {
+            console.log('AudioContext started');
+          });
+        }
+      }
+    };
+
+    // 全屏模式
+    const enter_fullscreen = {
+      type: jsPsychFullscreen,  // 使用Fullscreen插件
+      fullscreen_mode: true,    // 进入全屏模式
+      message: '<p>实验将在全屏模式下进行。点击下方按钮开始。</p>',  // 全屏提示信息
+      button_label: '进入全屏'  // 全屏按钮文字
+    };
+
+    const exercise  = {
+      type: jsPsychHtmlButtonResponse,  // 使用HtmlButtonResponse插件
+      stimulus: `
+        <div class="exercise-container">
+          <h2>练习阶段</h2>
+          <p>接下来您会看到不同颜色的字体显示在您的屏幕中央</p>
+          <p>您的任务是忽略文本的含义，只对文本的颜色进行按键（电脑端）或点击屏上的颜色按钮（手机端）进行反应</p>
+          <h3>对应按键或按钮分别为：</h3>
+          <p>红色字体——————按键为“d” 或 红色按钮</p>
+          <p>绿色字体——————按键为“f” 或 蓝色按钮</p>
+          <p>黄色字体——————按键为“j” 或 黄色按钮</p>
+          <p>蓝色字体——————按键为“k” 或 蓝色按钮</p>
+          <h3>理解上述含义后点击下方按钮开始练习</h3>
+        </div>
+      `,
+      choices: ['开始练习'],  // 设置按钮选项
+      
+    };
+
+    // 将步骤添加到时间线
+    timeline.push(welcome);
+    timeline.push(enter_fullscreen);
+    timeline.push(exercise);
+
+    // 运行实验
+    jsPsych.run(timeline);
+  </script>
+</html>
