@@ -1,144 +1,170 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Taboostroop测试（情绪测试）</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://unpkg.com/jspsych@8.0.0"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.0.0"></script>
-    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
-    <style>
-      .welcome-container,
-      .jspsych-fullscreen-message-container {
-        text-align: center;
-        margin-top: 50px;
-        padding: 0 20px;
-      }
+<head>
+  <meta charset="UTF-8">
+  <title>Inflation Perception Survey</title>
+  <!-- Add SheetJS library for Excel export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/jspsych@7.3.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.2"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.2"></script>
+  <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div id="consent-text" style="display: none;">
+    You are invited to participate in a research study about price of consumer products The purpose of this study is to explore people's perceptions of inflation rate.
+If you agree to participate in this study, you will be asked to complete an online survey. The survey will take approximately 8~15 minutes to complete and will include a short training section. You will be asked to answer all of the questions based on your experience. Your participation in this study is entirely voluntary. You may choose not to participate or to withdraw from the study at any time without any penalty or loss of benefits to which you are otherwise entitled.
+There are no anticipated risks associated with participating in this study. Your responses will be kept anonymous and confidential. All data collected will be used solely for research purposes. Your identity will not be linked to your responses, and any identifying information will not be collected.
+By clicking on the "I Agree" button below, you acknowledge that you have read and understand the information provided above, and you voluntarily agree to participate in this study.
+I have read and understood the above and hereby give my consent to take part in this experiment in full knowledge that data is being recorded.
+  </div>
+</body>
+<script>
+  // Initialize jsPsych with data export functionality
+  const jsPsych = initJsPsych({
+    on_finish: () => {
+      // Get all trial data
+      const data = jsPsych.data.get().values();
+      
+      // Process the data into a format suitable for Excel
+      const processedData = data.map(trial => {
+        try {
+          let row = {
+            'Trial Type': trial.trial_type || 'Unknown',
+            'RT (ms)': trial.rt || '',
+            'Time Elapsed': trial.time_elapsed || '',
+            'Question': '',
+            'Response': '',
+            'Correct': ''
+          };
 
-      .welcome-container h2,
-      .jspsych-fullscreen-message-container h2 {
-        font-size: 24px;
-      }
+          // Add response data based on trial type
+          if (trial.trial_type === 'html-button-response') {
+            // Safely extract question text from stimulus
+            if (trial.stimulus) {
+              row['Question'] = trial.stimulus
+                .replace(/<[^>]*>/g, '')  // Remove HTML tags
+                .replace(/\s+/g, ' ')     // Normalize whitespace
+                .trim();
+            }
+            
+            // Safely get response
+            if (trial.response !== undefined && Array.isArray(trial.choices)) {
+              row['Response'] = trial.choices[trial.response] || trial.response.toString();
+            }
+          } 
+          else if (trial.trial_type === 'survey-text') {
+            // Safely handle survey text responses
+            if (trial.questions && trial.questions[0]) {
+              row['Question'] = trial.questions[0].prompt || '';
+            }
+            if (trial.response && trial.response.cost_question) {
+              row['Response'] = trial.response.cost_question;
+            }
+            row['Correct'] = trial.correct ? 'Yes' : 'No';
+          }
 
-      .welcome-container p,
-      .jspsych-fullscreen-message-container p {
-        font-size: 16px;
-      }
-
-      .jspsych-btn {
-        font-size: 18px;
-        padding: 10px 20px;
-        margin-top: 20px;
-      }
-
-      .exercise-container {
-        text-align: center;
-        margin-top: 50px;
-        padding: 0 20px;
-      }
-
-      .exercise-container h2,
-      .exercise-container h3 {
-        font-size: 24px;
-      }
-
-      .exercise-container p {
-        font-size: 16px;
-      }
-
-      @media (max-width: 767px) {
-        .exercise-container {
-          padding: 0 20px;
+          return row;
+        } catch (error) {
+          console.error('Error processing trial:', error);
+          return {
+            'Trial Type': 'Error',
+            'RT (ms)': '',
+            'Time Elapsed': '',
+            'Question': 'Error processing trial data',
+            'Response': '',
+            'Correct': ''
+          };
         }
-        .exercise-container h2,
-        .exercise-container h3 {
-          font-size: 20px;
-        }
-        .exercise-container p {
-          font-size: 16px;
-        }
-        .welcome-container,
-        .jspsych-fullscreen-message-container {
-          padding: 0 20px;
-        }
-        .welcome-container h2,
-        .jspsych-fullscreen-message-container h2 {
-          font-size: 20px;
-        }
-        .welcome-container p,
-        .jspsych-fullscreen-message-container p {
-          font-size: 14px;
-        }
+      });
+
+      // Filter out any null or undefined entries
+      const cleanData = processedData.filter(row => row !== null && row !== undefined);
+
+      // Create worksheet
+      const ws = XLSX.utils.json_to_sheet(cleanData);
+      
+      // Create workbook and add worksheet
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Survey Results");
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(wb, "inflation_survey_results.xlsx");
+      
+      // Display data in console for verification
+      console.log('Processed Data:', cleanData);
+    }
+  });
+
+  const timeline = [];
+
+  /* Question 1: UK residency */
+  timeline.push({
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <h3>1. Have you lived in the UK for the past 5 years?</h3>
+    `,
+    choices: ['Yes', 'No']
+  });
+
+  /* Question 2: Consent */
+  let consentContent = document.querySelector('#consent-text').innerText;
+  
+  timeline.push({
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <h3>2. Consent</h3>
+      <div style="text-align: left; max-width: 800px;">
+        ${consentContent}
+      </div>
+    `,
+    choices: ['I agree', 'exit'],
+    on_finish: data => {
+      if (data.response == 1) {
+        jsPsych.endExperiment('Thanks for your time');
       }
-    </style>
-  </head>
-  <body></body>
-  <script>
-    // 初始化jsPsych
-    const jsPsych = initJsPsych({
-      on_finish: function() {
-        jsPsych.data.displayData(); // 实验完成后显示数据
+    }
+  });
+
+  /* Question 3: Sky color */
+  timeline.push({
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <h3>3. If you see a question that asks you the colour of the sky, you should answer 'green'.</h3>
+    `,
+    choices: ['RED', 'BLUE', 'GREEN']
+  });
+
+  /* Question 9: Cost question */
+  const costQuestion = {
+    type: jsPsychSurveyText,
+    questions: [{
+      prompt: "When production costs rise, the supply of goods will ______ (increase or decrease), leading to a ______ (1. rise or 2. fall) in the price level. If production costs continue to rise, businesses usually pass the costs on to consumers, ultimately resulting in a ______ (1. rise or 2. fall) in the overall price level. ( decrease, 2, 1,)",
+      placeholder: "Space separated answers",
+      name: "cost_question"
+    }],
+    on_finish: data => {
+      const answers = (data.response.cost_question || '').split(' ');
+      data.correct = answers[0] === 'decrease' && answers[1] === '2' && answers[2] === '1';
+    }
+  };
+
+  timeline.push({
+    timeline: [costQuestion, {
+      conditional_function: () => {
+        const last = jsPsych.data.get().last(1).values()[0];
+        return !last.correct;
       },
-      override_safe_mode: true // 允许覆盖安全模式
-    });
+      timeline: [{
+        type: jsPsychHtmlButtonResponse,
+        stimulus: "Perception and attitude of Inflation Rates……（ decrease, 2, 1,）",
+        choices: ['next']
+      }, costQuestion]
+    }]
+  });
 
-    // 设置实验时间线
-    const timeline = [];
-
-    // 欢迎屏幕
-    const welcome = {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: `
-        <div class="welcome-container">
-          <h2>欢迎参加实验！</h2>
-          <p>请点击下方按钮进入实验</p>
-        </div>
-      `,
-      choices: ['开始实验'],
-      on_start: function() {
-        // 尝试恢复 AudioContext
-        if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
-          window.AudioContext = window.AudioContext || window.webkitAudioContext;
-          const audioContext = new AudioContext();
-          audioContext.resume().then(() => {
-            console.log('AudioContext started');
-          });
-        }
-      }
-    };
-
-    // 全屏模式
-    const enter_fullscreen = {
-      type: jsPsychFullscreen,
-      fullscreen_mode: true,
-      message: '<div class="jspsych-fullscreen-message-container"><h2>实验将在全屏模式下进行。</h2><p>点击下方按钮开始。</p></div>',
-      button_label: '进入全屏'
-    };
-
-    const exercise  = {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: `
-        <div class="exercise-container">
-          <h2>练习阶段</h2>
-          <p>接下来您会看到不同颜色的字体显示在您的屏幕中央</p>
-          <p>您的任务是忽略文本的含义, <span style="font-weight: bold">只对文本的颜色进行按键（电脑端）或点击屏上的颜色按钮（手机端）进行反应</span></p>
-          <h3>对应按键或按钮分别为：</h3>
-          <p>红色字体——————按键为"d" 或 红色按钮</p>
-          <p>绿色字体——————按键为"f" 或 蓝色按钮</p>
-          <p>黄色字体——————按键为"j" 或 黄色按钮</p>
-          <p>蓝色字体——————按键为"k" 或 蓝色按钮</p>
-          <h3>理解上述含义后点击下方按钮开始练习</h3>
-        </div>
-      `,
-      choices: ['开始练习']
-    };
-
-    // 将步骤添加到时间线
-    timeline.push(welcome);
-    timeline.push(enter_fullscreen);
-    timeline.push(exercise);
-
-    // 运行实验
-    jsPsych.run(timeline);
-  </script>
+  // Run the experiment
+  jsPsych.run(timeline);
+</script>
 </html>
