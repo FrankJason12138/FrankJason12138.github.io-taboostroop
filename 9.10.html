@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Economics Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .question-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .fill-in-blank {
+            display: none;
+            margin-top: 20px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .completion-message {
+            display: none;
+            color: green;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+        select {
+            margin: 0 5px;
+            padding: 5px;
+        }
+        .hint-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .hint-modal button {
+            display: block;
+            margin: 20px auto 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container"></div>
+    <div id="completion-message" class="completion-message">
+        This random scale has ended, please close the webpage to continue answering.
+    </div>
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="hint-modal" class="hint-modal">
+        <div id="hint-content"></div>
+        <button onclick="closeHint()">OK</button>
+    </div>
+
+    <script>
+        const questions = {
+            'Cost-Push Inflation': {
+                title: 'Cost-Push Inflation',
+                mcq: {
+                    question: 'If a smartphone manufacturer adopts new automated production technology, significantly reducing production costs, how is the market price of smartphones likely to change if demand remains constant?',
+                    options: [
+                        'Prices will increase',
+                        'Prices will decrease',
+                        'Prices will remain unchanged'
+                    ],
+                    correct: 1,
+                    hint: `
+a. Cost-push inflation occurs when an increase in production costs (such as rising raw material prices, wage growth, and higher energy costs) leads to a rise in prices.
+
+b. When production costs increase, a company's production capacity may decline, resulting in a reduction in supply, which in turn leads to a general rise in the prices of goods and services.
+
+c. This type of inflation is most evident during periods of rising energy prices, increasing labor costs, or supply chain disruptions.`
+                },
+                fillIn: {
+                    question: 'When production costs rise, the supply of goods will ___ (increase or decrease), leading to a ___ (rise or fall) in the price level. If production costs continue to rise, businesses usually pass the costs on to consumers, ultimately resulting in a ___ (rise or fall) in the overall price level.',
+                    blanks: [
+                        ['increase', 'decrease'],
+                        ['rise', 'fall'],
+                        ['rise', 'fall']
+                    ],
+                    correct: [1, 0, 0],
+                    hint: `
+a. Cost-push inflation occurs when an increase in production costs (such as rising raw material prices, wage growth, and higher energy costs) leads to a rise in prices.
+
+b. When production costs increase, a company's production capacity may decline, resulting in a reduction in supply, which in turn leads to a general rise in the prices of goods and services.
+
+c. This type of inflation is most evident during periods of rising energy prices, increasing labor costs, or supply chain disruptions.`
+                }
+            },
+            'Demand-Pull Inflation': {
+                title: 'Demand-Pull Inflation',
+                mcq: {
+                    question: 'If the government implements large-scale fiscal stimulus, such as providing consumption subsidies or lowering interest rates, how will market prices likely change?',
+                    options: [
+                        'Prices will increase',
+                        'Prices will decrease',
+                        'Prices will remain unchanged'
+                    ],
+                    correct: 0,
+                    hint: `When the demand for goods and services exceeds supply capacity, goods in the market become scarce, allowing sellers to raise prices to meet high demand, leading to an increase in the overall price level.
+
+The following factors can trigger this response:
+- An increase in the money supply (e.g., central bank interest rate cuts or fiscal stimulus policies)
+- A rise in consumer income, enhancing purchasing power
+- Growth in investment spending
+
+Demand-pull inflation typically occurs during periods of economic expansion, when consumer confidence is high and government spending increases, leading to a rapid surge in demand.`
+                },
+                fillIn: {
+                    question: 'When the overall market demand increases, the demand for goods will ___ (increase or decrease), leading to a ___ (rise or fall) in the price level. If demand continues to rise while supply cannot keep up, this will result in a ___ (rise or fall) in the inflation rate.',
+                    blanks: [
+                        ['increase', 'decrease'],
+                        ['rise', 'fall'],
+                        ['rise', 'fall']
+                    ],
+                    correct: [0, 0, 0],
+                    hint: `When the demand for goods and services exceeds supply capacity, goods in the market become scarce, allowing sellers to raise prices to meet high demand, leading to an increase in the overall price level.
+
+The following factors can trigger this response:
+- An increase in the money supply (e.g., central bank interest rate cuts or fiscal stimulus policies)
+- A rise in consumer income, enhancing purchasing power
+- Growth in investment spending
+
+Demand-pull inflation typically occurs during periods of economic expansion, when consumer confidence is high and government spending increases, leading to a rapid surge in demand.`
+                }
+            },
+            'Taylor Rule': {
+                title: 'Taylor Rule',
+                mcq: {
+                    question: "If prices are rising quickly while people's incomes grow slowly, how should the government adjust the cost of borrowing?",
+                    options: [
+                        'Increase borrowing costs (interest rates)',
+                        'Decrease borrowing costs (interest rates)',
+                        'Make no changes'
+                    ],
+                    correct: 0,
+                    hint: `If prices of goods and services in the market rise too fast, the government may increase the cost of borrowing (such as interest rates) to reduce spending and control inflation.
+
+If economic activity slows down and businesses are reluctant to invest, the government may lower the cost of borrowing to encourage people to take loans for consumption or starting businesses, which helps boost the economy.
+
+This approach helps maintain economic balance by preventing prices from rising too fast or economic growth from slowing down too much.`
+                },
+                fillIn: {
+                    question: 'To maintain economic stability, the government usually adjusts the cost of borrowing money. When prices rise too quickly, the government should ___ (increase or decrease) the cost of borrowing money to reduce people\'s spending. When economic growth slows down, the government should ___ (increase or decrease) the cost of borrowing to encourage spending and investment.',
+                    blanks: [
+                        ['increase', 'decrease'],
+                        ['increase', 'decrease']
+                    ],
+                    correct: [0, 1,],
+                    hint: `If prices of goods and services in the market rise too fast, the government may increase the cost of borrowing (such as interest rates) to reduce spending and control inflation.
+
+If economic activity slows down and businesses are reluctant to invest, the government may lower the cost of borrowing to encourage people to take loans for consumption or starting businesses, which helps boost the economy.
+
+This approach helps maintain economic balance by preventing prices from rising too fast or economic growth from slowing down too much.`
+                }
+            },
+            'Phillips Curve': {
+                title: 'Phillips Curve',
+                mcq: {
+                    question: 'If the government works hard to create more jobs, how are prices of goods and services most likely to change in the short term?',
+                    options: [
+                        'Rise',
+                        'Fall',
+                        'Stay the same'
+                    ],
+                    correct: 0,
+                    hint: `Unemployment rate is the percentage of people who want to work but cannot find a job.
+
+In the short term, when more people are employed, they have more money to spend, leading to increased demand, which eventually pushes up the prices of goods and services.
+
+When more people participate in the workforce, the production of goods and services increases, but this usually leads to a higher inflation rate.`
+                },
+                fillIn: {
+                    question: 'Generally, when more people are employed, the unemployment rate will ___ (rise or fall), the prices of goods and services will ___ (rise or fall), which means that lower unemployment usually leads to ___ (higher or lower) price levels. meaning that the inflation rate will  ______ (rise or fall).',
+                    blanks: [
+                        ['rise', 'fall'],
+                        ['rise', 'fall'],
+                        ['higher', 'lower'],
+                        ['rise', 'fall']
+                    ],
+                    correct: [1, 0, 0, 0],
+                    hint: `Unemployment rate is the percentage of people who want to work but cannot find a job.
+
+In the short term, when more people are employed, they have more money to spend, leading to increased demand, which eventually pushes up the prices of goods and services.
+
+When more people participate in the workforce, the production of goods and services increases, but this usually leads to a higher inflation rate.`
+                }
+            }
+        };
+
+        function showHint(hint) {
+            document.getElementById('hint-content').innerHTML = hint;
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.getElementById('hint-modal').style.display = 'block';
+        }
+
+        function closeHint() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('hint-modal').style.display = 'none';
+        }
+
+        function getRandomQuestion() {
+            const keys = Object.keys(questions);
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            return keys[randomIndex];
+        }
+
+        function createQuestionHTML(questionKey) {
+            const question = questions[questionKey];
+            const html = `
+                <div class="question-container">
+                    <h2>${question.title}</h2>
+                    <div class="mcq">
+                        <p>${question.mcq.question}</p>
+                        ${question.mcq.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" name="mcq" value="${i}" id="mcq-${i}">
+                                <label for="mcq-${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                        <button onclick="checkMCQ('${questionKey}')">Submit</button>
+                    </div>
+                    <div class="fill-in-blank" id="fill-in">
+                        <p>${question.fillIn.question}</p>
+                        ${question.fillIn.blanks.map((options, i) => `
+                            <select id="blank-${i}">
+                                <option value="">Select...</option>
+                                ${options.map((opt, j) => `<option value="${j}">${opt}</option>`).join('')}
+                            </select>
+                        `).join('')}
+                        <button onclick="checkFillIn('${questionKey}')">Submit</button>
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function checkMCQ(questionKey) {
+            const selected = document.querySelector('input[name="mcq"]:checked');
+            if (!selected) {
+                showHint('Please select an answer');
+                return;
+            }
+            
+            if (parseInt(selected.value) === questions[questionKey].mcq.correct) {
+                document.getElementById('fill-in').style.display = 'block';
+            } else {
+                showHint(questions[questionKey].mcq.hint);
+            }
+        }
+
+        function checkFillIn(questionKey) {
+            const answers = questions[questionKey].fillIn.correct;
+            const selected = answers.map((_, i) => 
+                document.getElementById(`blank-${i}`).value
+            );
+            
+            if (selected.includes('')) {
+                showHint('Please fill in all blanks');
+                return;
+            }
+
+            const correct = selected.every((val, i) => parseInt(val) === answers[i]);
+            
+            if (correct) {
+                document.getElementById('completion-message').style.display = 'block';
+            } else {
+                showHint(questions[questionKey].fillIn.hint);
+            }
+        }
+
+        // Initialize quiz
+        window.onload = function() {
+            const selectedQuestion = getRandomQuestion();
+            document.getElementById('quiz-container').innerHTML = createQuestionHTML(selectedQuestion);
+        };
+    </script>
+</body>
+</html>
