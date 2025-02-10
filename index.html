@@ -34,15 +34,18 @@
     const timeline = [];
 
     /* 问题 1：英国居住情况 */
+
     timeline.push({
-  type: jsPsychHtmlButtonResponse,
-  stimulus: '<h3>1. Have you lived in the UK for the past 5 years?</h3>',
-  choices: ['yes', 'no'],
-  on_finish: function(data) {
-    var response = data.response;
-    console.log('被试按下的按钮是：' + response);
-  }
-});
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<h3>1. Have you lived in the UK for the past 5 years?</h3>`,
+      choices: ['I Agree', 'exit'],
+      on_finish: data => {
+        // 如果用户选择 "退出" 则结束实验
+        if (data.response == 1) {
+          jsPsych.endExperiment('Thank you for your participation. Unfortunately, based on your responses, you do not meet the eligibility criteria to continue.We appreciate your time and effort.');
+        }
+      }
+    });
 
     /* 问题 2：知情同意 */
     let consentContent = document.querySelector('#consent-text').innerText;
@@ -50,7 +53,7 @@
       type: jsPsychHtmlButtonResponse,
       stimulus: `<h3>2. consent</h3>
                  <div style="text-align: left; max-width: 800px;">${consentContent}</div>`,
-      choices: ['I agree', 'exit'],
+      choices: ['I Agree', 'exit'],
       on_finish: data => {
         // 如果用户选择 "退出" 则结束实验
         if (data.response == 1) {
@@ -65,15 +68,26 @@
       stimulus: `<h3>3. If you see a question that asks you the colour of the sky, you should answer 'green'.</h3>`,
       choices: ['I see']
     });
+    //* 问题 4：通货膨胀问题 */
+timeline.push({
+    type: jsPsychSurveyText,
+  questions: [{
+      prompt: "4.Annual inflation rate for a product is the rate of increase in the price of that product over a year. For example, if the price of a pen in September 2024 was £2.20 but the price of the same type of pen in September 2023 was £2.00, then the annual inflation rate for that product is 10%. Taking into account the answers you gave to the previous questions, what do you think the annual inflation rate (in %) across all types of product is at the present time (1 Feb 2024 to 1 Feb 2025)?",
+      placeholder: "Enter a percentage",
+      name: "cost_question",
+      input_type: "text",  // 改为text类型以便完全控制输入
+      required: true
+    },]
+});
     
-    /* 问题 4.0：引导进入 Likert 量表 */
+    /* 问题 5.0：引导进入 Likert 量表 */
     timeline.push({
       type: jsPsychHtmlButtonResponse,
-      stimulus: `<h3>4. Perception and attitude of Inflation Rates.</h3>`,
+      stimulus: `<h3>5.You will be asked to recall your purchasing experiences over the past few years regarding 12 different categories of goods,  then be asked with making predictions about the future potential price changes. These categories cover a wide range of products that you likely encounter in your daily life.  There are no right or wrong answers. We are simply interested in your unique perspective.</h3>`,
       choices: ['Continue']
     });
 
-   /* 问题 4.1：示例问题 */
+   /* 问题 5.1：示例问题 */
    timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
@@ -90,21 +104,21 @@
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Food and Non-Alcoholic Beverages: Includes all household expenditures on food and non-alcoholic drinks, such as bread, milk, vegetables, and soft drinks.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -131,21 +145,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Alcoholic Beverages and Tobacco: Includes household expenditures on alcoholic drinks (such as beer, wine, spirits) and tobacco products.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -173,21 +187,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Clothing and Footwear: Includes all types of clothing and footwear products, such as coats, trousers, skirts, shoes, etc.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -216,21 +230,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Housing, Water, Electricity, Gas, and Other Fuels: Includes housing costs (such as rent, mortgage interest), water charges, electricity bills, gas bills, and other heating expenses.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -259,21 +273,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Furniture, Household Equipment, and Maintenance: Includes household furnishings (such as furniture, appliances), and costs of household maintenance and repair.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -300,21 +314,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Health: Includes costs for medical services, pharmaceuticals, and health products.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -342,21 +356,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Transport: Includes purchase and operation costs of vehicles (such as cars, fuel), and public transportation costs (such as bus and train fares).</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -383,21 +397,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Communication: Includes costs for telephone and internet services.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -424,21 +438,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Recreation and Culture: Includes expenditures on recreational activities, cultural activities (such as cinema, books, sports activities), and holiday expenses.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -465,21 +479,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Education: Includes tuition fees, educational materials, etc.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -507,21 +521,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Restaurants and Hotels: Includes expenditures on dining out and accommodation.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -549,21 +563,21 @@ timeline.push({
 timeline.push({
   type: jsPsychSurveyText,
   questions: [{
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2023</strong> and <strong>Feb 1, 2024</strong>?",
+      prompt: "<h3>Miscellaneous Goods and Services: Includes personal care products, insurance, financial services, etc.</h3><br>What was the average cost(￡) per purchase between <strong>Feb , 2023</strong> and <strong>Feb , 2024</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What was the average cost(￡) per purchase between <strong>Feb 1, 2024</strong> and <strong>Feb 1, 2025</strong>?",
+      prompt: "What was the average cost(￡) per purchase between <strong>Feb , 2024</strong> and <strong>Feb , 2025</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
       required: true
     },
     {
-      prompt: "What will be the average cost(￡) per purchase between <strong>Feb 1, 2025</strong> and <strong>Feb 1, 2026</strong>?",
+      prompt: "What will be the average cost(￡) per purchase between <strong>Feb , 2025</strong> and <strong>Feb , 2026</strong>?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -572,23 +586,13 @@ timeline.push({
   ],
 });
 
-//* 问题 5：通货膨胀问题 */
-timeline.push({
-    type: jsPsychSurveyText,
-  questions: [{
-      prompt: "Annual inflation rate for a product is the rate of increase in the price of that product over a year. For example, if the price of a pen in September 2024 was £2.20 but the price of the same type of pen in September 2023 was £2.00, then the annual inflation rate for that product is 10%. Taking into account the answers you gave to the previous questions, what do you think the annual inflation rate (in %) across all types of product is at the present time (1 Feb 2024 to 1 Feb 2025)?",
-      placeholder: "Enter a percentage",
-      name: "cost_question",
-      input_type: "text",  // 改为text类型以便完全控制输入
-      required: true
-    },]
-});
+
 
 //* 问题 6：通货膨胀问题 */
 timeline.push({
     type: jsPsychSurveyText,
   questions: [{
-      prompt: "What do you think the annual inflation rate (in %) across all types of product will be next year (1 Feb 2025 to 1 Feb 2026)?",
+      prompt: "6.What do you think the annual inflation rate (in %) across all types of product will be next year (1 Feb 2025 to 1 Feb 2026)?",
       placeholder: "Enter a percentage",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -600,8 +604,8 @@ timeline.push({
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Restaurants and Hotels: Includes expenditures on dining out and accommodation.</h3>`,
-  choices: ['Very good','Good', 'Neutral', 'Bad', 'Very bad'],
+    <h3>7.On a scale from -10 (most negative) to 10 (most positive), how would you rate an increase in the inflation rate as a development? Please mark your response accordingly.</h3>`,
+  choices: ['-10','-9', '-8', '-7', '-6', '-5', '-4', '-3', '-2', '-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
   on_finish: function(data) {
     var response = data.response;
     console.log('被试选择的按钮索引是：' + response);
@@ -610,21 +614,22 @@ timeline.push({
 
 //* 问题 8：判断问题 */
 timeline.push({
-    type: jsPsychHtmlButtonResponse,
-    stimulus: `<h3>What do you think the optimal annual inflation rate should be for a healthy economy?</h3>`,
-    choices: ['-10','-9', '-8', '-7', '-6', '-5', '-4', '-3', '-2', '-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-    on_finish: function(data) {
-        var response = data.response;
-        data.timestamp = new Date().getTime(); // 添加时间戳
-        console.log('被试选择的按钮索引是：' + response);
-    }
+    type: jsPsychSurveyText,
+  questions: [{
+      prompt: "8.What do you think the optimal annual inflation rate should be for a healthy economy?",
+      placeholder: "Enter a percentage",
+      name: "cost_question",
+      input_type: "text",  // 改为text类型以便完全控制输入
+      required: true
+    },]
 });
+
 
 // 对于 openWindow 部分:
 var openWindow = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: 'Click the button to open the external HTML.',
-    choices: ['Open External HTML'],
+    stimulus: 'Next, you will read about some basic economic concepts. After reading, you will be asked to answer a question. You will see hints after each attempt. You will only proceed to the next section once you have correctly filled in all the blanks in the question.',
+    choices: ['next'],
     on_finish: function(data) {
         data.timestamp = new Date().getTime(); // 添加时间戳
         console.log('打开窗口时间戳：' + data.timestamp);
@@ -648,8 +653,8 @@ timeline.push(openWindow);
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Suppose you had $100 in a savings account and the interest rate iwas 2% per year. After 5 years, how much do you think you would have in the account if you left the money to grow?</h3>`,
-  choices: ['More than $102', 'Exactly $102', 'Less than $102', 'I do not know', 'Refuse to answer'],
+    <h3>11.Suppose you had ￡100 in a savings account and the interest rate iwas 2% per year. After 5 years, how much do you think you would have in the account if you left the money to grow?</h3>`,
+  choices: ['More than ￡102', 'Exactly ￡102', 'Less than ￡102', 'I do not know', 'Refuse to answer'],
   on_finish: function(data) {
     var response = data.response;
     console.log('被试选择的按钮索引是：' + response);
@@ -659,7 +664,7 @@ timeline.push({
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Imaginee that the interest rate on your saving account iwas 1% per year and inflation iwas 2% per year. After 1 year, how much would you be able to buy with the money in this account?</h3>`,
+    <h3>12.Imagine that the interest rate on your saving account iwas 1% per year and inflation iwas 2% per year. After 1 year, how much would you be able to buy with the money in this account?</h3>`,
   choices: ['More than today', 'Exactly the same', 'Less than today', 'I do not know', 'Refuse to answer'],
   on_finish: function(data) {
     var response = data.response;
@@ -670,7 +675,7 @@ timeline.push({
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Please tell me whether this statement is true or false:<br>
+    <h3>13.Please tell me whether this statement is true or false:<br>
 Buying a single company's stock usually provides a safer return than a stock mutual fund.</h3>`,
   choices: ['True', 'False', 'I do not know', 'Refuse to answer'],
   on_finish: function(data) {
@@ -682,7 +687,7 @@ Buying a single company's stock usually provides a safer return than a stock mut
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>What is the colour of the sky? </h3>`,
+    <h3>14.What is the colour of the sky? </h3>`,
   choices: ['RED', 'BLUE', 'GREEN', 'YELLOW'],
   on_finish: function(data) {
     var response = data.response;
@@ -693,7 +698,7 @@ timeline.push({
 timeline.push({
     type: jsPsychSurveyText,
   questions: [{
-      prompt: "Let's say you have $200 in a savings account. The account earns ten per cent interest per year. Interest accrues at each anniversary of the account. If you never withdraw money or interest payments, how much will you have in the account at the end of two years?",
+      prompt: "15.Let's say you have ￡200 in a savings account. The account earns ten per cent interest per year. Interest accrues at each anniversary of the account. If you never withdraw money or interest payments, how much will you have in the account at the end of two years?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -704,7 +709,7 @@ timeline.push({
 timeline.push({
     type: jsPsychSurveyText,
   questions: [{
-      prompt: "What is your age?",
+      prompt: "16.What is your age?",
       placeholder: "Enter a number",
       name: "cost_question",
       input_type: "text",  // 改为text类型以便完全控制输入
@@ -715,7 +720,7 @@ timeline.push({
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Which of the following best describes your gender? </h3>`,
+    <h3>17.Which of the following best describes your gender? </h3>`,
   choices: ['Male','Female'],
   on_finish: function(data) {
     var response = data.response;
@@ -726,13 +731,15 @@ timeline.push({
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>What is your education level? </h3>`,
+    <h3>18.What is your education level? </h3>`,
   choices: ['Less than High School','High School or equivalent','Some College,no degree','Associate s Degree','Bachelor s Degree in a Non-Economics Field','Bachelor s Degree in Economics or Related Field','Master s Degree in a Non-Economics Field','Master s Degree in Economics or Related Field','Doctoral Degree in a Non-Economics Field','Doctoral Degree in Economics or Related Field'],
   on_finish: function(data) {
     var response = data.response;
     console.log('被试选择的按钮索引是：' + response);
   }
 });
+
+
 
 
 
@@ -758,8 +765,46 @@ timeline.push({
   }
 });
 
+timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<h3>Saving data...</h3>',
+        choices: [],
+        on_load: function() {
+            const allData = jsPsych.data.get().values();
+            const jsonData = JSON.stringify(allData);
+            
+            fetch('save_data.php', {  // 确保这个路径指向你的PHP文件
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Save failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    jsPsych.finishTrial();
+                    // 可以在这里添加成功提示
+                    alert('Data saved successfully!');
+                } else {
+                    throw new Error('Save failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                jsPsych.endExperiment('Data saving failed, please contact the experimenter.');
+            });
+        }
+    });
+
     // 运行整个实验流程
     jsPsych.run(timeline);
+
   </script>
 </body>
 </html>
