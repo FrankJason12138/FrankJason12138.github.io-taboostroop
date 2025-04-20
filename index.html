@@ -1,43 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Experiment</title>
+    <title>参与研究 —— 理解通胀率调查</title>
+    <!-- 引入 Google 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial， sans-serif;
+        /* 全局重置和基本样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 卡片容器 */
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            padding: 32px;
+            text-align: left;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
             text-align: center;
-            padding: 50px;
         }
-
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 24px;
+        }
+        /* 按钮样式 */
         .start-button {
-            background-color: green;
-            color: black;
-            padding: 15px 30px;
-            font-size: 20px;
+            display: inline-block;
+            width: 100%;
+            background: linear-gradient(90deg, #36d1dc, #5b86e5);
+            color: #fff;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
-            border-radius: 5px;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
-
         .start-button:hover {
-            background-color: darkgreen;
+            background: linear-gradient(90deg, #5b86e5, #36d1dc);
+            transform: translateY(-2px);
+        }
+        .start-button:active {
+            transform: translateY(0);
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .start-button {
+                padding: 12px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <h1>Welcome to My Experiment</h1>
-    <p>Please read and respond to the following statement carefully.
-You are invited to participate in a research study about economic knowledge. The purpose of this study is to
-explore people's understanding of the inflation rate. lf you agree to participate in this study, you will be asked to complete an online survey. The survey will take
-approximately 8~15 minutes to complete and will include a short training section. You will be asked to answer all of the questions based on your experience. Your participation in this study is entirely voluntary. You may choose not to participate or to withdraw from the study at any time without any penalty or loss of benefits to which you are otherwise entitled. There are no anticipated risks
-associated with participating in this study. Your responses will be kept anonymous and confidential. All data collected will be used solely for research purposes. Your identity will not be linked to your responses, and any identifying
-information will not be collected. By clicking on the buttons below, you acknowledge that you have read and
-understand the information provided above, and you voluntarily agree to participate in this study.</p>
-
-    <button class="start-button" onclick="startExperiment()">Start</button>
+    <div class="card">
+        <h1>欢迎参与研究</h1>
+        <p>感谢您参与本次关于经济知识（通胀率）理解的研究。本研究旨在探索公众对通胀率的认知。若您同意参与，请完成一份在线问卷，耗时约 8–15 分钟，并包含简短的训练环节。您将基于自身体验回答所有问题。</p>
+        <p>本研究完全自愿，您可在任何阶段选择退出且不受任何影响。参与无预期风险，您的回答将匿名保密，仅用于科研目的，且不会收集任何可识别信息。</p>
+        <button class="start-button" onclick="startExperiment()">开始实验</button>
+    </div>
 
     <script>
         function startExperiment() {
@@ -48,15 +102,10 @@ understand the information provided above, and you voluntarily agree to particip
                 "https://test1.dittoshop.cn/",
                 "https://test.dittoshop.cn/"
             ];
-
-            // Randomly pick one link from the list
+            // 随机跳转
             const randomLink = links[Math.floor(Math.random() * links.length)];
-
-            // Redirect to the selected link
             window.location.href = randomLink;
         }
     </script>
-
 </body>
 </html>
-
